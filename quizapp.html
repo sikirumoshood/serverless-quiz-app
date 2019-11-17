@@ -1,0 +1,518 @@
+<html>
+    <head>
+        <title>Testing Javascript</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">   
+        <script src="bootstrap.min.js"></script>
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap-grid.min.css">
+        <link rel="stylesheet" href="bootstrap-reboot.min.css">
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        
+        <style>
+            
+            body{
+                
+                padding-left: 3px;
+                padding-right: 3px;
+                background-color:#211538;
+            }
+            .q-display{
+                margin-left: 4% !important;
+                background-color:#211538;
+                color:white;
+                margin-top: 30px;
+                height:600px;
+            }
+            
+            .add-q{
+                background-color: #211538;
+                color: #0c4561;
+                border-style: solid;
+                border-width: 1px;
+                border-radius: 30px;
+                margin-top: 30px;
+                
+                
+            }
+            .hide{
+                
+                display: none;
+            }
+            .new-q{
+                
+                padding:10px;
+                border-radius: 5%;
+                background-color:#211538;
+                color:white;
+                
+            }
+            .progress{
+                
+                transition:0.6s;
+            }
+            .smooth-round{
+                
+                margin-top:5%;
+                padding:2%;
+                border-width: 1px;
+                border-radius: 5%;
+                border-color: #5A6363;
+                border-style: solid;
+                color:#E5E5E6;
+                
+            }
+            .btn-primary{
+                
+                background-color: #744BC4;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-7 q-display">
+                    <p class="display-4" style="color:greenyellow; margin-bottom: 4%">Quiz App</p>
+                    
+                    <h5>Your progress: </h5><div class="progress-bar" style="width: 100%; height: 4px;background-color:darkgrey; margin-bottom: 3%">
+                        <div class="progress" id="progress" style="width: 0%; height:4px; background-color:dodgerblue"></div><span id='progress-value'></span>
+                    </div>
+                    
+                    <div id="question" style="margin-top: 6%; margin-bottom: 3%">
+                        
+                    
+                    </div>
+                    <div id="options">
+                    
+                        
+                    </div>
+                    <div id="answer" class="hide">
+                    
+                    </div>
+                    <hr style="background-color:grey; height: 1px; opacity: 0.4 ">
+                    <div>
+                        
+                        <button class="btn btn-success" type="button" id="start">Start</button>
+                        <button type="button" id="prev" class="btn btn-primary"> <i class="fa fa-chevron-left"></i> Prev </button>
+                        <button type="button" id="next" class="btn btn-primary"> Next <i class="fa fa-chevron-right"></i></button>
+                        <button type="button" id="finish" class="btn btn-success"> Finish <i class="fa fa-check-circle"></i></button>
+                        <button type="button" id="retake" class="btn btn-outline-success"> Retake <i class="fa fa-share-square"></i></button>
+                        
+                        <div id="result" class="smooth-round hide">
+                         
+                            <p>Total number of questions <span class="badge badge-secondary" id="total-q"></span> <i class="fa fa-question-circle"></i></p>
+                            <p>Total number of correct questions <span class="badge badge-success" id="total-q-c"></span> <i class="fa fa-check"></i></p>
+                            <p>Total number of incorrect questions <span class="badge badge-danger" id="total-q-i"></span> <i class="fa fa-times"></i></p>
+                            <hr style="background-color:grey; height: 1px; opacity: 0.4 ">
+                            <p>Percentage score <span class="badge" id="score"></span></p>
+                       
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="col-md-4 add-q">
+                    <p class="display-4" style="text-align: center; color:greenyellow">New Question</p>
+                    
+                    <div class="new-q">
+                        <div class="form-group">
+                            <p>Question</p>
+                            <textarea id="new-question" class="form-control" rows="8" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-options-1">Option one</label>
+                            <input class="form-control" type="text" id="new-options-1" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="new-options-2">Option two</label>
+                            <input class="form-control" type="text" id="new-options-2" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="new-options-3">Option three</label>
+                            <input class="form-control" type="text" id="new-options-3" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="new-options-4">Option four</label>
+                            <input  class="form-control" type="text" id="new-options-4" required>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="new-ans">Answer</label>
+                            <input  class="form-control" type="text" id="new-ans" required>
+                            
+                        </div>
+                        <div class="form-group justify-content-center">
+                            <button type="button" id="add-new-q" class="btn btn-outline-info">Add question</button>
+                        </div>
+                    
+                    </div>
+                </div>
+            
+            </div>
+        
+        </div>
+    </body>
+    <script>
+        'use strict'
+        let addNewBtn = document.getElementById('add-new-q');
+        let startBtn = document.getElementById('start');
+        let nextBtn = document.getElementById('next');
+        let prevBtn = document.getElementById('prev');
+        let finishBtn = document.getElementById('finish');
+        let retakeBtn = document.getElementById('retake');
+        let currentIndex = 0;
+        
+        retakeBtn.disabled=true;
+        nextBtn.addEventListener('click',onNext);
+        startBtn.addEventListener('click', onStart);
+        prevBtn.addEventListener('click',onPrev);
+        addNewBtn.addEventListener('click', onAddNewQuestion);
+        finishBtn.addEventListener('click',onFinish);
+        retakeBtn.addEventListener('click',onRetake);
+        
+        let questionToAnswerMap = new Map();
+        
+        
+        
+        let questions = [   new Question('Which country is the largest in Africa','japan','China','Europe','England','japan'),
+                            new Question('The full meaning of Ajax is ___','Asynchronous JavaScript and Xml','Async javax','Accordance JavaScript Xml','Asynchronous JavaScript and Xml','none'),
+                        ];
+        
+        
+        function Question(question,ans,...options)
+        {
+            this.question = question;
+            this.ans = ans;
+            this.options = options;
+            
+            this.getOptions = function()
+            {
+                return this.options;
+            }
+            
+            this.getQuestion = function ()
+            {
+                return this.question;
+            }
+            
+            
+            this.getAnswer = function ()
+            {
+                return  this.ans;
+            }
+            
+            this.setAnswer = function (answer)
+            {
+                this.ans = answer;
+            }
+            
+            
+        }
+        
+        function onAddNewQuestion()
+        {
+            let newQuestion = document.getElementById('new-question').value;
+            
+            let newOptions = [];
+            
+            for(let i=1 ; i<=4; ++i)
+                {
+                    newOptions.push(document.getElementById('new-options-'+i).value);
+                }
+            
+            let newAnswer = document.getElementById('new-ans').value;
+            questions.push(new Question(newQuestion,newAnswer,...newOptions));//spreading the options array as comma separated arguments;
+            console.log(questions);
+            
+            updateProgressBar();
+        }
+        
+        function updateProgressBar()
+        {
+            let noOfAnsweredQuestions = questionToAnswerMap.size;
+            let progress = Math.ceil((noOfAnsweredQuestions / questions.length) * 100);
+            let progSpan = document.getElementById('progress-value');
+            progSpan.innerHTML = progress+' %';
+            progSpan.style.marginBottom = '10%';
+            progSpan.style.marginTop = '1%';
+            
+            
+            //update progress bar
+            
+            let proBar = document.getElementById('progress');
+            
+            if(progress === 100)
+                {
+                    proBar.setAttribute('style',`width: ${progress}%; height:4px; background-color:greenyellow`);
+                }
+            
+            else{
+                
+                 proBar.setAttribute('style',`width: ${progress}%; height:4px; background-color:dodgerblue`);
+                
+            }
+           
+            
+            
+        }
+        
+        function getCorrectAnswers()
+        {
+            return questions.filter((question) => question.getAnswer() === questionToAnswerMap.get(questions.indexOf(question) )).length;
+        }
+        
+        function computeScore()
+        {
+            return Math.ceil((getCorrectAnswers()/questions.length )* 100);
+        }
+        
+        function onFinish()
+        {
+            updateProgressBar();
+            document.getElementById('result').setAttribute('class','smooth-round');
+            document.getElementById('total-q').innerHTML= questions.length;
+            document.getElementById('total-q-c').innerHTML = getCorrectAnswers();
+            document.getElementById('total-q-i').innerHTML = questions.length - getCorrectAnswers();
+            document.getElementById('score').innerHTML = computeScore() + '%';
+            
+            //make prev and next btn disabled
+            
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            
+            //enable retake button
+            
+            retakeBtn.disabled = false;
+                
+        }
+        
+        function onRetake()
+        {
+            //enable prev and next btns
+            
+            prevBtn.disabled = false;
+            nextBtn.disabled = false;
+            
+            questionToAnswerMap.clear();
+            currentIndex = 0;
+            retakeBtn.disabled = true;
+            document.getElementById('result').setAttribute('class','smooth-round hide');
+            
+            //reset progress
+            updateProgressBar();
+            
+            
+            //move question to one.
+            let questionNode = document.getElementById('question');
+            let optionNode = document.getElementById('options');
+            let answerNode = document.getElementById('answer');
+            
+            questionNode.innerHTML = 'Q.'+(currentIndex+1)+') '+questions[currentIndex].getQuestion();
+            answerNode.innerHTML = questions[currentIndex].getAnswer();
+            
+            
+            
+            for(let optId = 0; optId < questions[currentIndex].getOptions().length; ++optId)
+                {
+                    let oldLabelNode = document.getElementById(optId);
+                     console.log(oldLabelNode);
+                    let optionRadio = oldLabelNode.previousSibling;
+                    if(optionRadio.checked === true)
+                        {
+                            optionRadio.checked = false;
+                        }
+                    optionRadio.setAttribute('value', questions[currentIndex].getOptions()[optId] )
+                    optionRadio.setAttribute('class','option-radio');
+                    optionRadio.setAttribute('id','options-'+optId);
+                    
+                    
+                    let labelNode = document.createElement('label');
+                    labelNode.setAttribute('id',optId);
+                    labelNode.setAttribute('for', 'options-'+optId);
+                    let text = document.createTextNode('   ' + questions[currentIndex].getOptions()[optId]);
+                    labelNode.appendChild(text);
+                    
+                    optionNode.replaceChild(labelNode, oldLabelNode);
+                    
+                    //updating if answer exists
+                
+            
+                }
+            
+            
+        }
+        
+        function onNext()
+        {
+            if(currentIndex + 1 >= questions.length)
+                {
+                    console.log('max question reached');
+                    updateProgressBar();
+                    return;
+                    
+                }
+            
+            ++currentIndex;
+            
+            let questionNode = document.getElementById('question');
+            let optionNode = document.getElementById('options');
+            let answerNode = document.getElementById('answer');
+            
+            questionNode.innerHTML = 'Q.'+(currentIndex+1)+') '+questions[currentIndex].getQuestion();
+            answerNode.innerHTML = questions[currentIndex].getAnswer();
+                   
+            
+            for(let optId = 0; optId < questions[currentIndex].getOptions().length; ++optId)
+                {
+                    let oldLabelNode = document.getElementById(optId);
+                     console.log(oldLabelNode);
+                    let optionRadio = oldLabelNode.previousSibling;
+                    if(optionRadio.checked === true)
+                        {
+                            optionRadio.checked = false;
+                        }
+                    
+                    optionRadio.setAttribute('value', questions[currentIndex].getOptions()[optId] )
+                    optionRadio.setAttribute('class','option-radio');
+                    optionRadio.setAttribute('id','options-'+optId);
+                    
+                    
+                    let labelNode = document.createElement('label');
+                    labelNode.setAttribute('id',optId);
+                    labelNode.setAttribute('for', 'options-'+optId);
+                    labelNode.setAttribute('style','margin-left:4px;');
+                    
+                    let text = document.createTextNode('   ' + questions[currentIndex].getOptions()[optId]);
+                    labelNode.appendChild(text);
+                    
+                    optionNode.replaceChild(labelNode, oldLabelNode);
+                    
+                    //updating if answer exists
+                    
+                    if(questionToAnswerMap.has(currentIndex)) //if current question has been answered already
+                        {
+                            //find the label with that value 
+                            //getting option index;
+                            
+                            let index = questions[currentIndex].getOptions().indexOf(questionToAnswerMap.get(currentIndex));
+                            let oldLabelNode = document.getElementById(index);
+                            let optionRadio = oldLabelNode.previousSibling;
+                            optionRadio.checked = true;
+                        }
+            
+                }
+           
+            updateProgressBar();
+        }
+        
+        function onPrev()
+        {
+            if(currentIndex - 1 < 0)
+                {
+                    console.log('min question reached')
+                    return;
+                    
+                }
+            
+            --currentIndex;
+            
+            let questionNode = document.getElementById('question');
+            let optionNode = document.getElementById('options');
+            let answerNode = document.getElementById('answer');
+            
+            questionNode.innerHTML = 'Q.'+(currentIndex+1)+') '+questions[currentIndex].getQuestion();
+            answerNode.innerHTML = questions[currentIndex].getAnswer();
+            
+            
+            
+            for(let optId = 0; optId < questions[currentIndex].getOptions().length; ++optId)
+                {
+                    let oldLabelNode = document.getElementById(optId);
+                    console.log(oldLabelNode);
+                    let optionRadio = oldLabelNode.previousSibling;
+                    if(optionRadio.checked === true)
+                        {
+                            optionRadio.checked = false;
+                        }
+                    optionRadio.setAttribute('value', questions[currentIndex].getOptions()[optId] );
+                     optionRadio.setAttribute('class','option-radio');
+                    optionRadio.setAttribute('id','options-'+optId);
+                    
+                    
+                    let labelNode = document.createElement('label');
+                    labelNode.setAttribute('id',optId);
+                    labelNode.setAttribute('for', 'options-'+optId);
+                    labelNode.setAttribute('style','margin-left:4px;');
+                    let text = document.createTextNode('   ' + questions[currentIndex].getOptions()[optId]);
+                    labelNode.appendChild(text);
+                    
+                    optionNode.replaceChild(labelNode, oldLabelNode);
+                    
+                     if(questionToAnswerMap.has(currentIndex)) //if current question has been answered already
+                        {
+                            let index = questions[currentIndex].getOptions().indexOf(questionToAnswerMap.get(currentIndex));
+                            let oldLabelNode = document.getElementById(index);
+                            let optionRadio = oldLabelNode.previousSibling;
+                            optionRadio.checked = true;
+                        }
+            
+                }
+            
+            updateProgressBar();
+        }
+        
+        function onStart()
+        {
+            
+            //disable retake button;
+            
+            
+            
+            let questionNode = document.getElementById('question');
+            let optionNode = document.getElementById('options');
+            let answerNode = document.getElementById('answer');
+            
+            questionNode.innerHTML = 'Q.'+(currentIndex+1)+') '+questions[0].getQuestion();
+            answerNode.innerHTML = questions[0].getAnswer();
+            
+            
+            
+            for(let optId = 0; optId < questions[0].getOptions().length; ++optId)
+                {
+                    let optionRadio = document.createElement('input');
+                    optionRadio.setAttribute('type','radio');
+                    optionRadio.setAttribute('name','options');
+                    optionRadio.setAttribute('id','options-'+optId);
+                    optionRadio.setAttribute('value', questions[0].getOptions()[optId] );
+                    optionRadio.setAttribute('class','option-radio');
+                    
+                    let labelNode = document.createElement('label');
+                    labelNode.setAttribute('id',optId);
+                    labelNode.setAttribute('for', 'options-'+optId);
+                     labelNode.setAttribute('style','margin-left:4px;');
+                     let text = document.createTextNode(' ' + questions[0].getOptions()[optId]);
+                    labelNode.appendChild(text);
+                    
+                    optionNode.append(optionRadio,labelNode, document.createElement('br'));
+                 
+                    
+                }
+            let startNode = document.getElementById('start');
+            startNode.setAttribute('hidden','hidden');
+            
+            let anyRadioNode = document.getElementsByClassName('option-radio');
+            for(let radio of anyRadioNode)
+                {
+                    radio.addEventListener('click', () => { questionToAnswerMap.set(currentIndex, radio.getAttribute('value'))
+                                                                console.log(questionToAnswerMap);
+                                                          });
+                }
+            
+        }
+    
+    </script>
+</html>
